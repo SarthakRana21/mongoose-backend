@@ -10,6 +10,6 @@
     "moduleResolution": "node",
     "skipLibCheck": true
   },
-  "include": ["ecommerce-model", "hospital-management", "todos"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }
