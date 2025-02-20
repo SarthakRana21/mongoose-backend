@@ -1,0 +1,18 @@
+/.vscode
+*.env
+
+# Ignore build and dependency files
+node_modules
+dist
+build
+
+# Ignore config files
+package-lock.json
+tsconfig.json
+
+# Ignore generated files
+coverage
+public
+
+# Ignore specific files
+src/ignore-this-file.ts
