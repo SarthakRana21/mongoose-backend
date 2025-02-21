@@ -1,1 +1,1 @@
-export const DB_NAME = 'mongo';
+export const DB_NAME = 'sample_mflix';
