@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 
 interface IUser extends mongoose.Document {
-    id: string,
     watchHistory: mongoose.Schema.Types.ObjectId[],
     username: string,
     email: string,
@@ -13,10 +12,6 @@ interface IUser extends mongoose.Document {
 }
 
 const userSchema = new mongoose.Schema<IUser>({
-    id: {
-        type: String,
-        required: true,
-    },
     watchHistory: [
         {
             type: mongoose.Schema.Types.ObjectId,
@@ -26,26 +21,34 @@ const userSchema = new mongoose.Schema<IUser>({
     username: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        lowercase: true,
+        trim: true,
+        index: true
     },
     email: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        lowercase: true,
+        trim: true,
     },
     fullName: {
         type: String,
         required: true,
+        trim: true,
+        index: true
     },
     avatar: {
-        type: String,
+        type: String, // Cloudinary URL
+        required: true
     },
     coverImage: {
-        type: String,
+        type: String, // Cloudinary URL
     },
     password: {
-        type: String,
-        required: true
+        type: String, // encrypted
+        required: [true, 'Password is Required']
     },
     refreshToken: {
         type: String,
