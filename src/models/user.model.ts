@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 interface IUser extends mongoose.Document {
     watchHistory: mongoose.Schema.Types.ObjectId[],
@@ -6,7 +6,7 @@ interface IUser extends mongoose.Document {
     email: string,
     fullName: string,
     avatar: string,
-    coverImage: string,
+    coverImage?: string,
     password: string,
     refreshToken: string,
 }
@@ -52,6 +52,8 @@ const userSchema = new mongoose.Schema<IUser>({
     },
     refreshToken: {
         type: String,
+        required: true,
+        trim: true
     }
 }, {timestamps: true})
 
