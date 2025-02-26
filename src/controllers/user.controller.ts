@@ -22,6 +22,17 @@ const registerUser = asyncHandler(async (req, res)  => {
         throw new ApiError(400, "Username and email must be unique")
     }
 
+    const files = req.files as {
+        avatar?: Express.Multer.File[],
+        coverImage?: Express.Multer.File[]
+    }
+
+    const avatarLocalPath = files.avatar?.[0]?.path || null;
+    const coverImageLocalPath = files.coverImage?.[0]?.path || null;
+
+    if (!avatarLocalPath) {
+        throw new ApiError(400, "Please upload avatar pic")
+    }
 
     res.status(200).json({
         message: "ok",
