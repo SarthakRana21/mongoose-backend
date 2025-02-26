@@ -3,13 +3,13 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import ms from 'ms';
 
-const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET as string;
+const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET as string || 'test';
 const accessTokenExpiry = process.env.ACCESS_TOKEN_EXPIRY as ms.StringValue || '1d'
 if(!accessTokenSecret) {
     throw new Error("ACCESS_TOKEN_SECRET is not defined in environment variables");
 }
 
-const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET as string
+const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET as string || 'test';
 const refreshTokenExpriry = process.env.REFRESH_TOKEN_EXPIRY as ms.StringValue || '5d';
 if(!refreshTokenSecret) {
     throw new Error("REFRESH_TOKEN_SECRET is not defined in environment variables");
