@@ -1,7 +1,9 @@
 import { config } from "dotenv";
+import path from "path";
+config({path: path.resolve(__dirname, "../.env")})
+
 import connectDB from "./db/db";
 import {app} from "./app";
-config({path: './.env'})
 
 const port = process.env.PORT || 8000
 
