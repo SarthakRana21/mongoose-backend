@@ -3,13 +3,13 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import ms from 'ms';
 
-const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET as string || 'test';
+const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET as string;
 const accessTokenExpiry = process.env.ACCESS_TOKEN_EXPIRY as ms.StringValue || '1d'
 if(!accessTokenSecret) {
     throw new Error("ACCESS_TOKEN_SECRET is not defined in environment variables");
 }
 
-const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET as string || 'test';
+const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET as string;
 const refreshTokenExpriry = process.env.REFRESH_TOKEN_EXPIRY as ms.StringValue || '5d';
 if(!refreshTokenSecret) {
     throw new Error("REFRESH_TOKEN_SECRET is not defined in environment variables");
@@ -23,7 +23,7 @@ interface IUser extends mongoose.Document {
     avatar: string,
     coverImage?: string,
     password: string,
-    refreshToken: string,
+    refreshToken?: string,
 }
 
 const userSchema = new mongoose.Schema<IUser>({
@@ -67,7 +67,6 @@ const userSchema = new mongoose.Schema<IUser>({
     },
     refreshToken: {
         type: String,
-        required: true,
         trim: true
     }
 }, {timestamps: true})
