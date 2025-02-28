@@ -34,6 +34,8 @@ import { ApiError } from './utils/ApiError'
 // routes decleration
 app.use("/api/v1/users", userRouter)
 // http://localhost:8000/api/v1/users/register
+// http://localhost:8000/api/v1/users/login
+// http://localhost:8000/api/v1/users/logout
 
 
 // global error handling
