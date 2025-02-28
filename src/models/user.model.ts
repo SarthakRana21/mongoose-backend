@@ -24,6 +24,9 @@ interface IUser extends mongoose.Document {
     coverImage?: string,
     password: string,
     refreshToken?: string,
+    isPasswordCorrect(password: string): Promise<boolean>,
+    generateAccessToken(): string,
+    generateRefreshToken(): string
 }
 
 const userSchema = new mongoose.Schema<IUser>({
@@ -85,7 +88,7 @@ userSchema.methods.isPasswordCorrect = async function(password: string) {
 
 userSchema.methods.generateAccessToken = function(): string {
     const payload = {
-        _id: this._id.toString(),
+        _id: this._id,
         email: this.email,
         username: this.username,
         fullName: this.fullName
@@ -99,7 +102,7 @@ userSchema.methods.generateAccessToken = function(): string {
         }
     )
 }
-userSchema.methods.generateRefreshToken = async function() {
+userSchema.methods.generateRefreshToken = function(): string {
     return jwt.sign(
         {
             _id: this._id
@@ -111,4 +114,4 @@ userSchema.methods.generateRefreshToken = async function() {
     )
 }
 
-export const User = mongoose.model('User', userSchema)
+export const User = mongoose.model<IUser>('User', userSchema)
