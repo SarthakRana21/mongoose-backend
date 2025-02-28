@@ -105,11 +105,12 @@ const loginUser = asyncHandler(async (req, res) => {
     // send secure cookies
 
     const {username, email, password} = req.body
-
+    // console.log("username, email: ", req.body, req.headers)
     try {
-        if (!username || !email) {
+        if (!username && !email) {
             throw new ApiError(400, "username or email is requried");
         }
+        if (!password) throw new ApiError(400, "Password is required");
 
         const userExist = await User.findOne({
             $or: [
@@ -117,7 +118,7 @@ const loginUser = asyncHandler(async (req, res) => {
             ]
         })
 
-        if(!userExist) throw new ApiError(404, "User does not exist")
+        if (!userExist) throw new ApiError(404, "User does not exist");
 
         const isPasswordValid = await userExist.isPasswordCorrect(password) 
 
@@ -125,7 +126,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
         const {refreshToken, accesstoken} = await generateRefreshAndAccessTokens(userExist._id)
         
-        const updatedUser = await User.findById(userExist._id).select("-password, -refreshToken").lean()
+        const updatedUser = await User.findById(userExist._id).select("-password -refreshToken").lean()
 
         const options = {
             httpOnly: true,
@@ -171,7 +172,7 @@ const logOutUser = asyncHandler(async (req: AuthRequest, res) => {
         .clearCookie("accessToken", options)
         .clearCookie("refreshToken", options)
         .json(
-            new ApiResponse(200, {}, "user logged out successfully")
+            new ApiResponse(200, {user: user}, "user logged out successfully")
         )
         
     } catch (error) {
