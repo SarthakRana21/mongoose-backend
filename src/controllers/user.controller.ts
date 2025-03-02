@@ -205,4 +205,4 @@ const changeCurrentPassword = asyncHandler(async (req: AuthRequest, res) => {
 
 })
 
-export {registerUser, loginUser, logOutUser}
+export {registerUser, loginUser, logOutUser, changeCurrentPassword}
