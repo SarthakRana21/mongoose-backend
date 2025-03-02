@@ -1,5 +1,12 @@
 import {Router} from 'express';
-import {registerUser, loginUser, logOutUser} from '../controllers/user.controller'
+import {
+    registerUser, 
+    loginUser, 
+    logOutUser, 
+    changeCurrentPassword,
+    editUserDetails,
+    deleteUser
+} from '../controllers/user.controller'
 import {upload} from '../middlewares/multer.middleware'
 import { verifyJWT } from '../middlewares/auth.middleware';
 
@@ -21,9 +28,22 @@ userRouter.route('/register').post(
 
 userRouter.route('/login').post(loginUser)
 
+
 // secured routes
 userRouter.route('/logout').post(
     verifyJWT, logOutUser
+)
+
+userRouter.route('/change-password').post(
+    verifyJWT, changeCurrentPassword
+)
+
+userRouter.route('/edit-user-details').post(
+    verifyJWT, editUserDetails
+)
+
+userRouter.route('/delete-user').post(
+    verifyJWT, deleteUser
 )
 
 export default userRouter
