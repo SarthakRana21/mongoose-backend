@@ -36,6 +36,9 @@ app.use("/api/v1/users", userRouter)
 // http://localhost:8000/api/v1/users/register
 // http://localhost:8000/api/v1/users/login
 // http://localhost:8000/api/v1/users/logout
+// http://localhost:8000/api/v1/users/change-password
+// http://localhost:8000/api/v1/users/edit-user-details
+// http://localhost:8000/api/v1/users/delete-user
 
 
 // global error handling
