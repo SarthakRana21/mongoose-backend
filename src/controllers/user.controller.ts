@@ -205,4 +205,54 @@ const changeCurrentPassword = asyncHandler(async (req: AuthRequest, res) => {
 
 })
 
-export {registerUser, loginUser, logOutUser, changeCurrentPassword}
+const editUserDetails = asyncHandler(async (req: AuthRequest, res) => {
+    const {fullName, email, username} = req.body
+
+    try {
+        const userId = req.user?._id
+        if(!userId) throw new ApiError(400, "Please login to change details")
+
+        const userExist = await User.findOne({
+            $or: [
+                {email: email}, {username: username}
+            ]
+        })
+        if(userExist) throw new ApiError(400, userExist.username == username ? "Username already taken" : "Email already taken")
+        
+        const user = await User.findByIdAndUpdate(
+            userId,
+            {
+                $set: {
+                    email: email,
+                    username: username,
+                    fullName: fullName
+                }
+            },
+            {new: true}
+        ).select("-password -refreshToken").lean()
+
+        
+        return res.status(200)
+        .json(
+            new ApiResponse(200, user, 'Account Details updated successfully')
+        )
+
+    } catch (error) {
+        throw error
+    }
+})
+
+const deleteUser = asyncHandler(async (req: AuthRequest, res) => {
+    const userId = req.user?._id;
+    if(!userId) throw new ApiError(400, "User not found")
+
+    const result = await User.findByIdAndDelete(userId)
+    if(!result) throw new ApiError(400, "User dosen't exist")
+
+    return res.status(200)
+    .json(
+        new ApiResponse(200, "User deleted successfully")
+    )
+})
+
+export {registerUser, loginUser, logOutUser, changeCurrentPassword, editUserDetails, deleteUser}
