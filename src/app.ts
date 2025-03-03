@@ -39,6 +39,7 @@ app.use("/api/v1/users", userRouter)
 // http://localhost:8000/api/v1/users/change-password
 // http://localhost:8000/api/v1/users/edit-user-details
 // http://localhost:8000/api/v1/users/delete-user
+// http://localhost:8000/api/v1/users/update-image
 
 
 // global error handling

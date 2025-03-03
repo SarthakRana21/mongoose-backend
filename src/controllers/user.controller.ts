@@ -243,4 +243,46 @@ const deleteUser = asyncHandler(async (req: AuthRequest, res) => {
     )
 })
 
-export {registerUser, loginUser, logOutUser, changeCurrentPassword, editUserDetails, deleteUser}
+const updateUserAvatar = asyncHandler(async (req:AuthRequest, res) => {
+    const userId = req.user?._id;
+    if(!userId) throw new ApiError(400, "no user found, please login to update Image")
+
+    const files = req.files as {
+        avatar?: Express.Multer.File[],
+        coverImage?: Express.Multer.File[]
+    }
+    const avatarLocalPath = files.avatar?.[0]?.path || null;
+    const coverImageLocalPath = files.coverImage?.[0]?.path || null;
+
+    try {
+        const avatarIMG = await uploadOnCloudidnary(avatarLocalPath)
+        const coverImageIMG = await uploadOnCloudidnary(coverImageLocalPath)
+
+        if(avatarIMG?.url) await User.findByIdAndUpdate(userId, {
+            $set: {
+                avatar: avatarIMG.url
+            }
+        }, {new: true})
+
+        if(coverImageIMG?.url) await User.findByIdAndUpdate(userId, {
+            $set: {
+                coverImage: coverImageIMG.url
+            }
+        }, {new: true})
+        
+
+        return res.status(200)
+        .json(
+            new ApiResponse(200, "Image updated successfully")
+        )
+
+    } catch (error) {
+        if (avatarLocalPath) fs.unlinkSync(avatarLocalPath)
+        if (coverImageLocalPath) fs.unlinkSync(coverImageLocalPath)
+        
+        throw new ApiError(500, "Unable to update the Image")
+    }
+
+})
+
+export {registerUser, loginUser, logOutUser, changeCurrentPassword, editUserDetails, deleteUser, updateUserAvatar}

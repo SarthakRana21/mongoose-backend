@@ -5,7 +5,8 @@ import {
     logOutUser, 
     changeCurrentPassword,
     editUserDetails,
-    deleteUser
+    deleteUser,
+    updateUserAvatar
 } from '../controllers/user.controller'
 import {upload} from '../middlewares/multer.middleware'
 import { verifyJWT } from '../middlewares/auth.middleware';
@@ -44,6 +45,21 @@ userRouter.route('/edit-user-details').post(
 
 userRouter.route('/delete-user').post(
     verifyJWT, deleteUser
+)
+
+userRouter.route('/update-image').post(
+    verifyJWT, 
+    upload.fields([
+        {
+            name: 'avatar',
+            maxCount: 1
+        },
+        {
+            name: 'coverImage',
+            maxCount: 1
+        }
+    ]),
+    updateUserAvatar
 )
 
 export default userRouter
