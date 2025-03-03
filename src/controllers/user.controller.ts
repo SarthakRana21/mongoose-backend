@@ -106,140 +106,128 @@ const loginUser = asyncHandler(async (req, res) => {
 
     const {username, email, password} = req.body
     // console.log("username, email: ", req.body, req.headers)
-    try {
-        if (!username && !email) {
-            throw new ApiError(400, "username or email is requried");
-        }
-        if (!password) throw new ApiError(400, "Password is required");
+    // if req.body is undefined make in req.headers content type should be application/json not multipart/form data
+    // if using postman select the body type x-www-form-urlencoded
 
-        const userExist = await User.findOne({
-            $or: [
-                {email}, {username}
-            ]
-        })
-
-        if (!userExist) throw new ApiError(404, "User does not exist");
-
-        const isPasswordValid = await userExist.isPasswordCorrect(password) 
-
-        if(!isPasswordValid) throw new ApiError(401, "Incorrect Password, Please try again")
-
-        const {refreshToken, accesstoken} = await generateRefreshAndAccessTokens(userExist._id)
-        
-        const updatedUser = await User.findById(userExist._id).select("-password -refreshToken").lean()
-
-        const options = {
-            httpOnly: true,
-            secure: true
-        }
-
-        return res.status(200)
-        .cookie("accessToken", accesstoken, options)
-        .cookie("refreshToken", refreshToken, options)
-        .json(
-            new ApiResponse(200, {
-                user: updatedUser, accesstoken, refreshToken
-            }, "User logged in successfully")
-        )
-
-    } catch (error) {
-        throw error
+    if (!username && !email) {
+        throw new ApiError(400, "username or email is requried");
     }
+    if (!password) throw new ApiError(400, "Password is required");
+
+    const userExist = await User.findOne({
+        $or: [
+            {email}, {username}
+        ]
+    })
+
+    if (!userExist) throw new ApiError(404, "User does not exist");
+
+    const isPasswordValid = await userExist.isPasswordCorrect(password) 
+
+    if(!isPasswordValid) throw new ApiError(401, "Incorrect Password, Please try again")
+
+    const {refreshToken, accesstoken} = await generateRefreshAndAccessTokens(userExist._id)
+    
+    const updatedUser = await User.findById(userExist._id).select("-password -refreshToken").lean()
+
+    const options = {
+        httpOnly: true,
+        secure: true
+    }
+
+    return res.status(200)
+    .cookie("accessToken", accesstoken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json(
+        new ApiResponse(200, {
+            user: updatedUser, accesstoken, refreshToken
+        }, "User logged in successfully")
+    )
+
+   
 
 })
 
 const logOutUser = asyncHandler(async (req: AuthRequest, res) => {
     const user = req.user
 
-    try {
-        if(!user) throw new ApiError(401, "Invalid User")
+    
+    if(!user) throw new ApiError(401, "Invalid User")
 
-        await User.findByIdAndUpdate(user._id, 
-            {
-                $set: {refreshToken: ""}
-            },
-            {
-                new: true
-            }
-        )
-
-        const options = {
-            httpOnly: true,
-            secure: true
+    await User.findByIdAndUpdate(user._id, 
+        {
+            $set: {refreshToken: ""}
+        },
+        {
+            new: true
         }
+    )
 
-        return res.status(200)
-        .clearCookie("accessToken", options)
-        .clearCookie("refreshToken", options)
-        .json(
-            new ApiResponse(200, {user: user}, "user logged out successfully")
-        )
-        
-    } catch (error) {
-        throw error
+    const options = {
+        httpOnly: true,
+        secure: true
     }
+
+    return res.status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json(
+        new ApiResponse(200, {user: user}, "user logged out successfully")
+    )
 })
 
 const changeCurrentPassword = asyncHandler(async (req: AuthRequest, res) => {
     const {oldPassword, newPassword, confPassword} = req.body;
 
-    try {
-        const userId = req.user?._id
-        const currentUser = await User.findById(userId)
-        if(!currentUser) throw new ApiError(402, 'User not found')
+    const userId = req.user?._id
+    const currentUser = await User.findById(userId)
+    if(!currentUser) throw new ApiError(402, 'User not found')
 
-        const isPasswordCorrect = await currentUser.isPasswordCorrect(oldPassword);
-        if(!isPasswordCorrect) throw new ApiError(400, 'Incorrect Old password');
+    const isPasswordCorrect = await currentUser.isPasswordCorrect(oldPassword);
+    if(!isPasswordCorrect) throw new ApiError(400, 'Incorrect Old password');
 
-        currentUser.password = newPassword;
-        await currentUser.save({validateBeforeSave: false})
+    currentUser.password = newPassword;
+    await currentUser.save({validateBeforeSave: false})
 
-        return res.status(200)
-        .json(
-            new ApiResponse(200, {}, 'Password Changed Successfully')
-        )
-
-    } catch (error) {
-        throw error
-    }
+    return res.status(200)
+    .json(
+        new ApiResponse(200, 'Password Changed Successfully')
+    )
 
 })
 
 const editUserDetails = asyncHandler(async (req: AuthRequest, res) => {
     const {fullName, email, username} = req.body
 
-    try {
-        const userId = req.user?._id
-        if(!userId) throw new ApiError(400, "Please login to change details")
 
-        const userExist = await User.findOne({
-            $or: [
-                {email: email}, {username: username}
-            ]
-        })
-        if(userExist) throw new ApiError(400, userExist.username == username ? "Username already taken" : "Email already taken")
-        
-        const user = await User.findByIdAndUpdate(
-            userId,
-            {
-                $set: {
-                    email: email,
-                    username: username,
-                    fullName: fullName
-                }
-            },
-            {new: true}
-        ).select("-password -refreshToken").lean()
+    const userId = req.user?._id
+    if(!userId) throw new ApiError(400, "Please login to change details")
 
-        
-        return res.status(200)
-        .json(
-            new ApiResponse(200, user, 'Account Details updated successfully')
-        )
+    const userExist = await User.findOne({
+        $or: [
+            {email: email}, {username: username}
+        ]
+    })
+    if(userExist) throw new ApiError(400, userExist.username == username ? "Username already taken" : "Email already taken")
+    
+    const user = await User.findByIdAndUpdate(
+        userId,
+        {
+            $set: {
+                email: email,
+                username: username,
+                fullName: fullName
+            }
+        },
+        {new: true}
+    ).select("-password -refreshToken").lean()
 
-    } catch (error) {
-        throw error
-    }
+    
+    return res.status(200)
+    .json(
+        new ApiResponse(200, user, 'Account Details updated successfully')
+    )
+
 })
 
 const deleteUser = asyncHandler(async (req: AuthRequest, res) => {
