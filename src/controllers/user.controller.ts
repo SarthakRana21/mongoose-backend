@@ -1,7 +1,7 @@
 import { asyncHandler } from '../utils/asyncHandler';
 import { ApiError } from '../utils/ApiError';
 import { User } from '../models/user.model'
-import { uploadOnCloudidnary } from '../utils/cloudinary'
+import { uploadOnCloudidnary, deleteFromCloudinary } from '../utils/cloudinary'
 import { ApiResponse } from '../utils/ApiResponse'
 import fs from 'fs'
 import { JwtPayload } from 'jsonwebtoken';
@@ -255,25 +255,29 @@ const updateUserAvatar = asyncHandler(async (req:AuthRequest, res) => {
     const coverImageLocalPath = files.coverImage?.[0]?.path || null;
 
     try {
+        const user = await User.findById(userId)
+        if(!user) throw new ApiError(400, "user not found")
+
         const avatarIMG = await uploadOnCloudidnary(avatarLocalPath)
         const coverImageIMG = await uploadOnCloudidnary(coverImageLocalPath)
 
-        if(avatarIMG?.url) await User.findByIdAndUpdate(userId, {
-            $set: {
-                avatar: avatarIMG.url
-            }
-        }, {new: true})
+        if(avatarIMG?.url) {
+            await deleteFromCloudinary(user.avatar)
+            user.avatar = avatarIMG.url
+        }
 
-        if(coverImageIMG?.url) await User.findByIdAndUpdate(userId, {
-            $set: {
-                coverImage: coverImageIMG.url
-            }
-        }, {new: true})
-        
+        if(coverImageIMG?.url) {
+            if(user.coverImage) await deleteFromCloudinary(user.coverImage)
+            
+            user.coverImage = coverImageIMG.url
+        }
+
+        await user.save({validateBeforeSave: false})
+
 
         return res.status(200)
         .json(
-            new ApiResponse(200, "Image updated successfully")
+            new ApiResponse(200, user, "Image updated successfully")
         )
 
     } catch (error) {
