@@ -10,9 +10,11 @@ import {
 } from '../controllers/user.controller'
 import {upload} from '../middlewares/multer.middleware'
 import { verifyJWT } from '../middlewares/auth.middleware';
+import { getWatchHistory } from '../controllers/channel.controller';
 
 const userRouter = Router()
 
+// http://localhost:8000/api/v1/users/register
 userRouter.route('/register').post(
     upload.fields([
         {
@@ -27,26 +29,32 @@ userRouter.route('/register').post(
     registerUser
 )
 
+// http://localhost:8000/api/v1/users/login
 userRouter.route('/login').post(loginUser)
 
 
 // secured routes
+// http://localhost:8000/api/v1/users/logout
 userRouter.route('/logout').post(
     verifyJWT, logOutUser
 )
 
+// http://localhost:8000/api/v1/users/change-password
 userRouter.route('/change-password').post(
     verifyJWT, changeCurrentPassword
 )
 
+// http://localhost:8000/api/v1/users/edit-user-details
 userRouter.route('/edit-user-details').post(
     verifyJWT, editUserDetails
 )
 
+// http://localhost:8000/api/v1/users/delete-user
 userRouter.route('/delete-user').post(
     verifyJWT, deleteUser
 )
 
+// http://localhost:8000/api/v1/users/update-image
 userRouter.route('/update-image').post(
     verifyJWT, 
     upload.fields([
@@ -60,6 +68,12 @@ userRouter.route('/update-image').post(
         }
     ]),
     updateUserAvatar
+)
+
+// http://localhost:8000/api/v1/users/watch-history
+userRouter.route('/watch-history').get(
+    verifyJWT,
+    getWatchHistory
 )
 
 export default userRouter
