@@ -28,6 +28,7 @@ app.get("/", (req, res) => {
 
 // routers
 import userRouter from './routes/user.routes'
+import channelRouter from './routes/channel.routes'
 import { ApiError } from './utils/ApiError'
 
 
@@ -40,7 +41,10 @@ app.use("/api/v1/users", userRouter)
 // http://localhost:8000/api/v1/users/edit-user-details
 // http://localhost:8000/api/v1/users/delete-user
 // http://localhost:8000/api/v1/users/update-image
+// http://localhost:8000/api/v1/users/watch-history
 
+app.use("/api/v1/channel/user", channelRouter)
+// http://localhost:8000/api/v1/channel/:username
 
 // global error handling
 
