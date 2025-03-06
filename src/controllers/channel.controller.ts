@@ -115,6 +115,13 @@ const getWatchHistory = asyncHandler(async (req: AuthRequest, res) => {
                                         avatar: 1,
                                         fullName: 1,
                                     }
+                                },
+                                {
+                                    $addFields: {
+                                        owner: {
+                                            $first: "$owner"
+                                        }
+                                    }
                                 }
                             ]
                         }
@@ -138,7 +145,7 @@ const getWatchHistory = asyncHandler(async (req: AuthRequest, res) => {
 
     return res.status(200)
     .json(
-        new ApiResponse(200, user[0])
+        new ApiResponse(200, user[0].watchHistory, "Watch History fetch successfully")
     )
 })
 
