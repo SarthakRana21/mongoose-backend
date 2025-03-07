@@ -3,13 +3,8 @@ import { User } from "../models/user.model"
 import { ApiError } from "../utils/ApiError"
 import { ApiResponse } from "../utils/ApiResponse"
 import { asyncHandler } from "../utils/asyncHandler"
-import { Request } from "express"
 import mongoose from "mongoose"
-
-
-interface AuthRequest extends Request {
-    user?: JwtPayload
-}
+import { AuthRequest } from '../interface/authRequest.interface'
 
 // aggregation pipeline
 const getUserChannelProfile = asyncHandler(async(req: AuthRequest, res) => {

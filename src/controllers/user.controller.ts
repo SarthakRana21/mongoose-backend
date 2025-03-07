@@ -6,10 +6,7 @@ import { ApiResponse } from '../utils/ApiResponse'
 import fs from 'fs'
 import { JwtPayload } from 'jsonwebtoken';
 import { Request } from 'express';
-
-interface AuthRequest extends Request {
-    user?: JwtPayload
-}
+import { AuthRequest } from '../interface/authRequest.interface';
 
 const generateRefreshAndAccessTokens = async (userId: any) => {
     try {
