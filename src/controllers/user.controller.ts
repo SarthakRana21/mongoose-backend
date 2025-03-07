@@ -4,8 +4,6 @@ import { User } from '../models/user.model'
 import { uploadOnCloudidnary, deleteFromCloudinary } from '../utils/cloudinary'
 import { ApiResponse } from '../utils/ApiResponse'
 import fs from 'fs'
-import { JwtPayload } from 'jsonwebtoken';
-import { Request } from 'express';
 import { AuthRequest } from '../interface/authRequest.interface';
 
 const generateRefreshAndAccessTokens = async (userId: any) => {
