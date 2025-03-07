@@ -21,6 +21,11 @@ const toggleVideoLike = asyncHandler(async (req: AuthRequest, res) => {
         )
     }
     const likeVideo = await Like.create({video: videoId, likedBy: userId})
+
+    return res.status(200)
+    .json(
+        new ApiResponse(200, likeVideo, "Video liked successfully")
+    )
     
 })
 
