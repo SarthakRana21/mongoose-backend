@@ -29,14 +29,31 @@ const toggleVideoLike = asyncHandler(async (req: AuthRequest, res) => {
     
 })
 
-const toggleCommentLike = asyncHandler(async (req, res) => {
+const toggleCommentLike = asyncHandler(async (req: AuthRequest, res) => {
     const {commentId} = req.params
-    //TODO: toggle like on comment
+    const userID = req.user?._id
+
+    if(!userID) throw new ApiError(400, "Please login to like the comment")
+
+    const removeLive = await Like.findOneAndDelete({comment: commentId, likedBy: userID})
+
+    if(removeLive) {
+        return res.status(200)
+        .json(
+            new ApiResponse(200, "Like removed")
+        )
+    }
+
+    const likeComment = await Like.create({comment: commentId, likedBy: userID})
+
+    return res.status(200)
+    .json(
+        new ApiResponse(200, likeComment, "Comment liked successfully")
+    )
 
 })
 
-const getLikedVideos = asyncHandler(async (req, res) => {
-    //TODO: get all liked videos
+const getLikedVideos = asyncHandler(async (req:AuthRequest, res) => {
 
 })
 
