@@ -54,6 +54,25 @@ const toggleCommentLike = asyncHandler(async (req: AuthRequest, res) => {
 })
 
 const getLikedVideos = asyncHandler(async (req:AuthRequest, res) => {
+    const userId = req.user?._id
+
+    if(!userId) throw new ApiError(400, "Please login to see liked videos")
+    
+    const likedVideos = await Like.aggregate([
+        {
+            $match: {
+                likedBy: userId?.toLocaleLowerCase()
+            }
+        },
+        {
+            $lookup: {
+                from: "videos",
+                localField: "video",
+                foreignField: "_id",
+                as: "videoList"
+            }
+        }
+    ])
 
 })
 
