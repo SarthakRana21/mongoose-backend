@@ -57,11 +57,19 @@ const getLikedVideos = asyncHandler(async (req:AuthRequest, res) => {
     const userId = req.user?._id
 
     if(!userId) throw new ApiError(400, "Please login to see liked videos")
+    const userObjectId = new mongoose.Types.ObjectId(userId)
     
     const likedVideos = await Like.aggregate([
         {
             $match: {
-                likedBy: userId?.toLocaleLowerCase()
+                likedBy: userObjectId
+            }
+        },
+        {
+            $match: {
+                video: {
+                    $ne: null
+                }
             }
         },
         {
@@ -71,8 +79,22 @@ const getLikedVideos = asyncHandler(async (req:AuthRequest, res) => {
                 foreignField: "_id",
                 as: "videoList"
             }
+        },
+        {
+            $unwind: "$videoList" // Flatten the array to get individual video objects
+        },
+        {
+            $group: {
+                _id: null,
+                videos: { $addToSet: "$videoList" } // Collect unique liked videos
+            }
         }
     ])
+
+    return res.status(200)
+    .json(
+        new ApiResponse(200, likedVideos[0], "Total Liked Videos")
+    )
 
 })
 
