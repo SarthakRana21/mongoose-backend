@@ -1,14 +1,19 @@
 import mongoose from 'mongoose'
 
-interface IComment {
+interface IPlaylist {
     name: string,
+    description: string,
     video: mongoose.Schema.Types.ObjectId[],
     owner: mongoose.Schema.Types.ObjectId
 }
 
-const commentSchema = new mongoose.Schema<IComment>(
+const playlistSchema = new mongoose.Schema<IPlaylist>(
     {
         name: {
+            type: String,
+            required: true
+        },
+        description: {
             type: String,
             required: true
         },
@@ -26,4 +31,4 @@ const commentSchema = new mongoose.Schema<IComment>(
     {timestamps: true}
 )
 
-export const Playlist = mongoose.model<IComment>("Comment", commentSchema)
+export const Playlist = mongoose.model<IPlaylist>("Playlist", playlistSchema)
