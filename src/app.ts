@@ -50,8 +50,8 @@ app.use("/api/v1/channel/user", channelRouter)
 
 
 app.use("/api/v1/like", likeRouter)
-// http://localhost:8000/api/v1/like/video/:videoId
-// http://localhost:8000/api/v1/like/comment/:commentId
+// http://localhost:8000/api/v1/like/toggle/v/:videoId
+// http://localhost:8000/api/v1/toggle/c/:commentId
 // http://localhost:8000/api/v1/like/videos
 
 
