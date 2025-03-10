@@ -53,22 +53,30 @@ Server will run on `http://localhost:5000`.
     │
     ├───controllers
     │       channel.controller.ts
+    |       like.controller.ts
     │       user.controller.ts
     │
     ├───db
     │       db.ts
     │
+    ├───interface
+    |       authRequest.interface.ts
+    |
     ├───middlewares
     │       auth.middleware.ts
     │       multer.middleware.ts
     │
     ├───models
+    |       comment.model.ts
+    |       like.model.ts
+    |       playlist.model.ts
     │       subscription.model.ts
     │       user.model.ts
     │       video.model.ts
     │
     ├───routes
     │       channel.routes.ts
+    |       like.routes.ts
     │       user.routes.ts
     │
     └───utils
