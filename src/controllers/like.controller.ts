@@ -1,4 +1,4 @@
-import mongoose, {isValidObjectId} from "mongoose"
+import mongoose from "mongoose"
 import {Like} from "../models/like.model"
 import {ApiError} from "../utils/ApiError"
 import {ApiResponse} from "../utils/ApiResponse"

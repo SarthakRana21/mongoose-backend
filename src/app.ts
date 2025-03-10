@@ -29,6 +29,7 @@ app.get("/", (req, res) => {
 // routers
 import userRouter from './routes/user.routes'
 import channelRouter from './routes/channel.routes'
+import likeRouter from './routes/like.routes'
 import { ApiError } from './utils/ApiError'
 
 
@@ -43,11 +44,19 @@ app.use("/api/v1/users", userRouter)
 // http://localhost:8000/api/v1/users/update-image
 // http://localhost:8000/api/v1/users/watch-history
 
+
 app.use("/api/v1/channel/user", channelRouter)
 // http://localhost:8000/api/v1/channel/:username
 
-// global error handling
 
+app.use("/api/v1/like", likeRouter)
+// http://localhost:8000/api/v1/like/video/:videoId
+// http://localhost:8000/api/v1/like/comment/:commentId
+// http://localhost:8000/api/v1/like/videos
+
+
+
+// global error handling
 app.use((err: ApiError, req: Request, res: Response, next: NextFunction) => {
     console.log("Global Error: ", err)
 
