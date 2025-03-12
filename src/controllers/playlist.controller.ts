@@ -30,12 +30,63 @@ const createPlaylist = asyncHandler(async (req: AuthRequest, res) => {
 
 const getUserPlaylists = asyncHandler(async (req, res) => {
     const {userId} = req.params
-    //TODO: get user playlists
+    
+    if(!userId) throw new ApiError(400, "Please login to get your playlist")
+    const userObjectId = new mongoose.Types.ObjectId(userId)
+
+    const userPlaylist = await Playlist.find({owner: userObjectId}).select("name description _id").lean()
+
+    if(!userPlaylist) throw new ApiError(400, "User Playlist not found")
+
+    return res.status(200)
+    .json(
+        new ApiResponse(200, userPlaylist, "User playlist fetch success")
+    )
 })
 
 const getPlaylistById = asyncHandler(async (req, res) => {
     const {playlistId} = req.params
-    //TODO: get playlist by id
+    const playlistObjectID = new mongoose.Types.ObjectId(playlistId)
+
+    if (!playlistId || !mongoose.Types.ObjectId.isValid(playlistId)) {
+        throw new ApiError(400, "Invalid Playlist ID");
+    }
+
+    const playlist = await Playlist.aggregate([
+        {
+            $match: {
+                _id: playlistObjectID
+            }
+        },
+        {
+            $lookup: {
+                from: "videos",
+                localField: "video",
+                foreignField: "_id",
+                as: "playlistVideos"
+            }
+        },
+        {
+            $project: {
+                _id: 1,
+                name: 1,
+                description: 1,
+                "playlistVideos._id": 1,
+                "playlistVideos.title": 1,
+                "playlistVideos.duration": 1,
+                "playlistVideos.views": 1,
+                "playlistVideos.thumbnail": 1,  
+                "playlistVideos.videoFile": 1,  
+            }
+        }
+    ])
+
+    if(!playlist) throw new ApiError(400, "No Playlist found")
+
+    return res.status(200)
+    .json(
+        new ApiResponse(200, playlist, "Playlist Fetch success")
+    )
 })
 
 const addVideoToPlaylist = asyncHandler(async (req, res) => {
