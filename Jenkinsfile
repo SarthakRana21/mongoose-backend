@@ -29,8 +29,9 @@ pipeline {
         stage('Deploy') {
             steps {
                     sh '''
+                        echo "workspace is: \$WORKSPACE"
                         set -a
-                        [ -f .env ] && . .env
+                        [ -f "\$WORKSPACE/.env" ] && . "\$WORKSPACE/.env"
                         set +a
                         docker run -dit -p 3003:3003 --name ${NAME} ${NAME}
                     '''
